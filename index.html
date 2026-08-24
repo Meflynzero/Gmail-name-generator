@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Gmail Generator</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --text-color: #333;
+            --container-bg: #fff;
+            --primary-color: #1a73e8;
+            --primary-hover: #1557b0;
+            --success-color: #34a853;
+            --success-hover: #2c8c45;
+            --button-text: #fff;
+            --input-bg: #fff;
+            --input-border: #ccc;
+            --textarea-bg: #f9f9f9;
+            --info-color: #666;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --container-bg: #1e1e1e;
+            --primary-color: #8ab4f8;
+            --primary-hover: #aecbfa;
+            --success-color: #81c995;
+            --success-hover: #a8dab5;
+            --button-text: #121212;
+            --input-bg: #2d2d2d;
+            --input-border: #444;
+            --textarea-bg: #252525;
+            --info-color: #aaa;
+            --shadow-color: rgba(0,0,0,0.5);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn-generate {
+            background-color: var(--primary-color);
+            color: var(--button-text);
+        }
+        .btn-generate:hover { background-color: var(--primary-hover); }
+
+        .btn-download {
+            background-color: var(--success-color);
+            color: var(--button-text);
+        }
+        .btn-download:hover { background-color: var(--success-hover); }
+
+        button:disabled {
+            background-color: var(--input-border);
+            color: var(--info-color);
+            cursor: not-allowed;
+        }
+
+        .preview-area { margin-top: 20px; }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            background-color: var(--textarea-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            resize: none;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .info {
+            font-size: 12px;
+            color: var(--info-color);
+            margin-top: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="theme-toggle" id="themeToggle" title="Ganti Tema">🌙</button>
+
+    <h2>Gmail Generator</h2>
+    
+    <div class="form-group">
+        <label for="amount">Jumlah Email (contoh: 100000):</label>
+        <input type="number" id="amount" min="1" max="1000000" value="1000" placeholder="Masukkan jumlah...">
+    </div>
+    
+    <div class="button-group">
+        <button class="btn-generate" id="generateBtn" onclick="generateEmails()">Buat Email</button>
+        <button class="btn-download" id="downloadBtn" onclick="downloadTxt()" disabled>Simpan ke .TXT</button>
+    </div>
+    
+    <div class="preview-area">
+        <label>Preview (Maksimal 100 ditampilkan):</label>
+        <textarea id="preview" readonly placeholder="Hasil akan muncul di sini..."></textarea>
+        <div class="info" id="statusText">Menunggu perintah...</div>
+    </div>
+</div>
+
+<script>
+    // --- FITUR DARK MODE ---
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const body = document.body;
+    
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+        themeToggleBtn.innerText = '☀️';
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            themeToggleBtn.innerText = '☀️';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggleBtn.innerText = '🌙';
+        }
+    });
+
+    // --- DATA NAMA MANUSIA ---
+    const firstNames = [
+        "andi", "budi", "citra", "dani", "eko", "fajar", "gilang", "hasan", "intan", "joko",
+        "kiki", "lia", "mega", "nova", "opan", "putri", "qori", "raka", "siti", "trio",
+        "umar", "vina", "wahyu", "xander", "yanto", "zaki", "alex", "ben", "chris", "david",
+        "evan", "frank", "george", "harry", "ivan", "john", "kevin", "luke", "mike", "nolan",
+        "oliver", "peter", "quinn", "ryan", "sam", "tom", "victor", "will", "zayn", "ayu",
+        "bela", "cindy", "diana", "elisa", "fani", "gina", "hana", "irma", "julia", "kara",
+        "lina", "mia", "nina", "olivia", "puji", "ratna", "sari", "tina", "ulan", "vera", "winda", "yeni", "zara"
+    ];
+
+    const lastNames = [
+        "saputra", "wijaya", "pratama", "kurniawan", "setiawan", "hidayat", "santoso", "gunawan",
+        "wibowo", "purnomo", "kusuma", "pangestu", "fauzi", "putra", "nugroho", "prasetyo",
+        "susanto", "ramadhan", "akbar", "mahendra", "smith", "johnson", "williams", "brown",
+        "jones", "garcia", "miller", "davis", "rodriguez", "martinez", "hernandez", "lopez",
+        "gonzalez", "wilson", "anderson", "thomas", "taylor", "moore", "jackson", "martin",
+        "lee", "perez", "thompson", "white", "harris", "sanchez", "clark", "ramirez", "lewis",
+        "robinson", "walker", "young", "allen", "king", "wright", "scott", "torres", "nguyen"
+    ];
+
+    let emailArray = []; 
+
+    // --- FUNGSI GENERATOR ---
+    function generateEmails() {
+        const amount = parseInt(document.getElementById('amount').value);
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const preview = document.getElementById('preview');
+        const statusText = document.getElementById('statusText');
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('Masukkan jumlah yang valid (minimal 1)');
+            return;
+        }
+
+        generateBtn.disabled = true;
+        downloadBtn.disabled = true;
+        statusText.innerText = `Sedang memproses ${amount} email...`;
+        preview.value = "";
+        emailArray = []; 
+
+        setTimeout(() => {
+            let previewText = "";
+
+            for (let i = 0; i < amount; i++) {
+                // 1. Ambil nama depan acak
+                let fName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                // 2. Ambil nama belakang acak
+                let lName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                // 3. Buat angka acak dari 1 hingga 9999
+                let randomNumber = Math.floor(Math.random() * 9999) + 1;
+                
+                // Gabungkan: namaDepan + namaBelakang + angka
+                let fullEmail = fName + lName + randomNumber + "@gmail.com";
+                
+                emailArray.push(fullEmail); 
+
+                if (i < 100) {
+                    previewText += fullEmail + "\n";
+                }
+            }
+
+            preview.value = previewText;
+            if (amount > 100) {
+                preview.value += `\n... dan ${amount - 100} email lainnya (Klik tombol Simpan)`;
+            }
+
+            statusText.innerText = `Berhasil membuat ${amount} email! Siap disimpan.`;
+            generateBtn.disabled = false;
+            downloadBtn.disabled = false;
+        }, 100);
+    }
+
+    // --- FUNGSI DOWNLOAD ---
+    function downloadTxt() {
+        if (emailArray.length === 0) {
+            alert("Belum ada email yang dibuat!");
+            return;
+        }
+
+        const amount = emailArray.length;
+        const blob = new Blob([emailArray.join("\n")], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Generated_Human_Gmail_${amount}.txt`;
+        document.body.appendChild(a);
+        a.click(); 
+        
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        document.getElementById('statusText').innerText = `File .txt berisi ${amount} email berhasil diunduh!`;
+    }
+</script>
+
+</body>
+</html>
