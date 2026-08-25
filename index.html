@@ -3,186 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Human Gmail Generator</title>
+    <title>Pro Gmail Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* === TEMA TERANG (DEFAULT) === */
         :root {
-            --bg-color: #f0f2f5;
-            --text-color: #333;
-            --container-bg: #fff;
-            --primary-color: #1a73e8;
-            --primary-hover: #1557b0;
-            --success-color: #34a853;
-            --success-hover: #2c8c45;
-            --button-text: #fff;
-            --input-bg: #fff;
-            --input-border: #ccc;
-            --textarea-bg: #f9f9f9;
-            --info-color: #666;
-            --shadow-color: rgba(0,0,0,0.1);
+            --bg-color: #f3f4f6;
+            --container-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --border: #e5e7eb;
+            --input-bg: #f9fafb;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
 
+        /* === TEMA GELAP === */
         body.dark-mode {
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --container-bg: #1e1e1e;
-            --primary-color: #8ab4f8;
-            --primary-hover: #aecbfa;
-            --success-color: #81c995;
-            --success-hover: #a8dab5;
-            --button-text: #121212;
-            --input-bg: #2d2d2d;
-            --input-border: #444;
-            --textarea-bg: #252525;
-            --info-color: #aaa;
-            --shadow-color: rgba(0,0,0,0.5);
+            --bg-color: #111827;
+            --container-bg: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --success: #34d399;
+            --success-hover: #10b981;
+            --danger: #f87171;
+            --danger-hover: #ef4444;
+            --border: #374151;
+            --input-bg: #111827;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            transition: background-color 0.3s, color 0.3s;
+            transition: all 0.3s ease;
+            padding: 20px;
         }
 
-        .container {
+        .card {
             background-color: var(--container-bg);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px var(--shadow-color);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             position: relative;
-            transition: background-color 0.3s, box-shadow 0.3s;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
         }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h2 { margin: 0; font-size: 24px; font-weight: 700; color: var(--primary); }
+        .header p { margin: 5px 0 0; font-size: 14px; color: var(--text-muted); }
 
         .theme-toggle {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 20px;
+            top: 25px;
+            right: 25px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            font-size: 18px;
             cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            transition: transform 0.2s;
+            padding: 8px 12px;
+            border-radius: 50px;
+            transition: all 0.2s;
+            color: var(--text-main);
         }
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
+        .theme-toggle:hover { transform: scale(1.05); border-color: var(--primary); }
 
-        h2 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-top: 0;
+        .db-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            font-weight: 600;
         }
+        .db-info span { color: var(--text-muted); }
+        .db-info strong { color: var(--success); font-size: 15px; }
+        .btn-reset {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-reset:hover { background: var(--danger-hover); }
 
-        .form-group {
-            margin-bottom: 20px;
+        .form-group { margin-bottom: 20px; }
+        /* Grid untuk merapikan input agar sejajar jika layar lebar */
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
         }
+        .input-box { flex: 1; }
 
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 13px;
         }
-
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             width: 100%;
-            padding: 10px;
+            padding: 14px 15px;
             background-color: var(--input-bg);
-            color: var(--text-color);
-            border: 1px solid var(--input-border);
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            color: var(--text-main);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
         }
+        input:focus { border-color: var(--primary); }
 
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
+        .button-group { display: flex; gap: 15px; margin-bottom: 20px; }
+        button.btn-main {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
+        .btn-generate { background-color: var(--primary); }
+        .btn-generate:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+        
+        .btn-download { background-color: var(--success); }
+        .btn-download:hover:not(:disabled) { background-color: var(--success-hover); transform: translateY(-2px); }
+        
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
-        .btn-generate {
-            background-color: var(--primary-color);
-            color: var(--button-text);
-        }
-        .btn-generate:hover { background-color: var(--primary-hover); }
-
-        .btn-download {
-            background-color: var(--success-color);
-            color: var(--button-text);
-        }
-        .btn-download:hover { background-color: var(--success-hover); }
-
-        button:disabled {
-            background-color: var(--input-border);
-            color: var(--info-color);
-            cursor: not-allowed;
-        }
-
-        .preview-area { margin-top: 20px; }
-
+        .preview-area label { display: flex; justify-content: space-between; }
         textarea {
             width: 100%;
-            height: 150px;
-            padding: 10px;
-            background-color: var(--textarea-bg);
-            color: var(--text-color);
-            border: 1px solid var(--input-border);
-            border-radius: 5px;
+            height: 160px;
+            padding: 15px;
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border: 2px solid var(--border);
+            border-radius: 12px;
             font-size: 14px;
-            box-sizing: border-box;
             resize: none;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            outline: none;
+            line-height: 1.5;
         }
+        textarea:focus { border-color: var(--primary); }
 
-        .info {
-            font-size: 12px;
-            color: var(--info-color);
-            margin-top: 5px;
+        .status-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 10px;
             text-align: center;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="card">
     <button class="theme-toggle" id="themeToggle" title="Ganti Tema">🌙</button>
 
-    <h2>Gmail Generator</h2>
+    <div class="header">
+        <h2>Gmail Generator PRO</h2>
+        <p>Format: Nama + Teks + 3 Angka</p>
+    </div>
+
+    <!-- Info Database Lokal -->
+    <div class="db-info">
+        <div>
+            <span>Tersimpan di Memori: </span>
+            <strong id="savedCount">0</strong>
+        </div>
+        <button class="btn-reset" onclick="resetDatabase()">Reset</button>
+    </div>
     
-    <div class="form-group">
-        <label for="amount">Jumlah Email (contoh: 100000):</label>
-        <input type="number" id="amount" min="1" max="1000000" value="1000" placeholder="Masukkan jumlah...">
+    <div class="input-row">
+        <div class="input-box">
+            <label for="amount">Jumlah Email:</label>
+            <input type="number" id="amount" min="1" max="50000" value="10" placeholder="Misal: 5000">
+        </div>
+        <div class="input-box">
+            <label for="customText">Teks Tambahan (Opsional):</label>
+            <input type="text" id="customText" value="knv" placeholder="Kosongkan jika tidak ada">
+        </div>
     </div>
     
     <div class="button-group">
-        <button class="btn-generate" id="generateBtn" onclick="generateEmails()">Buat Email</button>
-        <button class="btn-download" id="downloadBtn" onclick="downloadTxt()" disabled>Simpan ke .TXT</button>
+        <button class="btn-main btn-generate" id="generateBtn" onclick="generateEmails()">
+            ⚡ Buat Email
+        </button>
+        <button class="btn-main btn-download" id="downloadBtn" onclick="downloadTxt()" disabled>
+            💾 Simpan .TXT
+        </button>
     </div>
     
     <div class="preview-area">
-        <label>Preview (Maksimal 100 ditampilkan):</label>
-        <textarea id="preview" readonly placeholder="Hasil akan muncul di sini..."></textarea>
-        <div class="info" id="statusText">Menunggu perintah...</div>
+        <label>
+            <span>Hasil Preview (Max 100)</span>
+        </label>
+        <textarea id="preview" readonly placeholder="Email akan muncul di sini..."></textarea>
+        <div class="status-text" id="statusText">Menunggu perintah...</div>
     </div>
 </div>
 
@@ -211,11 +264,11 @@
     const firstNames = [
         "andi", "budi", "citra", "dani", "eko", "fajar", "gilang", "hasan", "intan", "joko",
         "kiki", "lia", "mega", "nova", "opan", "putri", "qori", "raka", "siti", "trio",
-        "umar", "vina", "wahyu", "xander", "yanto", "zaki", "alex", "ben", "chris", "david",
-        "evan", "frank", "george", "harry", "ivan", "john", "kevin", "luke", "mike", "nolan",
-        "oliver", "peter", "quinn", "ryan", "sam", "tom", "victor", "will", "zayn", "ayu",
+        "umar", "vina", "wahyu", "yanto", "zaki", "alex", "ben", "chris", "david",
+        "evan", "frank", "george", "harry", "ivan", "john", "kevin", "luke", "mike",
+        "oliver", "peter", "ryan", "sam", "tom", "victor", "will", "ayu",
         "bela", "cindy", "diana", "elisa", "fani", "gina", "hana", "irma", "julia", "kara",
-        "lina", "mia", "nina", "olivia", "puji", "ratna", "sari", "tina", "ulan", "vera", "winda", "yeni", "zara"
+        "lina", "mia", "nina", "olivia", "puji", "ratna", "sari", "tina", "ulan", "vera", "winda", "yeni"
     ];
 
     const lastNames = [
@@ -224,84 +277,141 @@
         "susanto", "ramadhan", "akbar", "mahendra", "smith", "johnson", "williams", "brown",
         "jones", "garcia", "miller", "davis", "rodriguez", "martinez", "hernandez", "lopez",
         "gonzalez", "wilson", "anderson", "thomas", "taylor", "moore", "jackson", "martin",
-        "lee", "perez", "thompson", "white", "harris", "sanchez", "clark", "ramirez", "lewis",
-        "robinson", "walker", "young", "allen", "king", "wright", "scott", "torres", "nguyen"
+        "lee", "perez", "thompson", "white", "harris", "sanchez", "clark", "ramirez"
     ];
 
-    let emailArray = []; 
+    // --- DATABASE MEMORI ---
+    let savedEmailsDB = new Set(JSON.parse(localStorage.getItem('generatedHistory') || '[]'));
+    let tempEmailArray = []; 
+
+    function updateDBCount() {
+        document.getElementById('savedCount').innerText = savedEmailsDB.size.toLocaleString('id-ID');
+    }
+    updateDBCount(); 
+
+    function resetDatabase() {
+        if(confirm("Yakin ingin mereset memori? Email yang sudah pernah dibuat bisa ter-generate lagi nantinya.")) {
+            savedEmailsDB.clear();
+            localStorage.setItem('generatedHistory', '[]');
+            updateDBCount();
+            alert("Database memori berhasil direset!");
+        }
+    }
 
     // --- FUNGSI GENERATOR ---
     function generateEmails() {
         const amount = parseInt(document.getElementById('amount').value);
+        // Ambil nilai dari input custom, lalu bersihkan dari karakter aneh dan spasi, jadikan huruf kecil semua
+        let customTextRaw = document.getElementById('customText').value;
+        const customText = customTextRaw.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+
         const generateBtn = document.getElementById('generateBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const preview = document.getElementById('preview');
         const statusText = document.getElementById('statusText');
 
         if (isNaN(amount) || amount <= 0) {
-            alert('Masukkan jumlah yang valid (minimal 1)');
+            alert('Masukkan jumlah yang valid!');
             return;
         }
 
         generateBtn.disabled = true;
         downloadBtn.disabled = true;
-        statusText.innerText = `Sedang memproses ${amount} email...`;
+        statusText.innerText = `Membuat ${amount} email dan mengecek duplikat...`;
         preview.value = "";
-        emailArray = []; 
+        
+        tempEmailArray = []; 
+        let currentSessionSet = new Set(); 
 
         setTimeout(() => {
             let previewText = "";
+            let failedToGenerate = 0;
 
             for (let i = 0; i < amount; i++) {
-                // 1. Ambil nama depan acak
-                let fName = firstNames[Math.floor(Math.random() * firstNames.length)];
-                // 2. Ambil nama belakang acak
-                let lName = lastNames[Math.floor(Math.random() * lastNames.length)];
-                // 3. Buat angka acak dari 1 hingga 9999
-                let randomNumber = Math.floor(Math.random() * 9999) + 1;
-                
-                // Gabungkan: namaDepan + namaBelakang + angka
-                let fullEmail = fName + lName + randomNumber + "@gmail.com";
-                
-                emailArray.push(fullEmail); 
+                let fullEmail = "";
+                let isUnique = false;
+                let safetyLoop = 0;
 
-                if (i < 100) {
-                    previewText += fullEmail + "\n";
+                while (!isUnique && safetyLoop < 1000) {
+                    let fName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                    let lName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                    
+                    let randomNumber = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                    
+                    // Format baru menggunakan customText yang sudah dibersihkan
+                    fullEmail = `${fName}${lName}${customText}${randomNumber}@gmail.com`;
+
+                    if (!savedEmailsDB.has(fullEmail) && !currentSessionSet.has(fullEmail)) {
+                        isUnique = true;
+                    }
+                    safetyLoop++;
+                }
+
+                if (isUnique) {
+                    tempEmailArray.push(fullEmail);
+                    currentSessionSet.add(fullEmail);
+
+                    if (tempEmailArray.length <= 100) {
+                        previewText += fullEmail + "\n";
+                    }
+                } else {
+                    failedToGenerate++;
                 }
             }
 
             preview.value = previewText;
-            if (amount > 100) {
-                preview.value += `\n... dan ${amount - 100} email lainnya (Klik tombol Simpan)`;
+            if (tempEmailArray.length > 100) {
+                preview.value += `\n... dan ${tempEmailArray.length - 100} email lainnya (Klik Simpan)`;
             }
 
-            statusText.innerText = `Berhasil membuat ${amount} email! Siap disimpan.`;
+            if (failedToGenerate > 0) {
+                statusText.innerText = `Berhasil ${tempEmailArray.length} email. (Gagal ${failedToGenerate} - silakan Reset memori!)`;
+            } else {
+                statusText.innerText = `Berhasil membuat ${tempEmailArray.length} email! Siap disimpan.`;
+            }
+
             generateBtn.disabled = false;
-            downloadBtn.disabled = false;
+            if (tempEmailArray.length > 0) {
+                downloadBtn.disabled = false;
+            }
         }, 100);
     }
 
     // --- FUNGSI DOWNLOAD ---
     function downloadTxt() {
-        if (emailArray.length === 0) {
-            alert("Belum ada email yang dibuat!");
-            return;
-        }
+        if (tempEmailArray.length === 0) return;
 
-        const amount = emailArray.length;
-        const blob = new Blob([emailArray.join("\n")], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
+        const amount = tempEmailArray.length;
         
+        // Ambil nama custom text untuk dijadikan nama file saat di-download
+        let customTextRaw = document.getElementById('customText').value;
+        let fileNameTag = customTextRaw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        if(fileNameTag === "") fileNameTag = "POLOS"; // Jika teks tambahan dikosongkan
+        
+        const blob = new Blob([tempEmailArray.join("\n")], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Generated_Human_Gmail_${amount}.txt`;
+        
+        // Nama file menyesuaikan custom teks yang dipakai (cth: Email_KNV_1000.txt atau Email_POLOS_1000.txt)
+        a.download = `Email_${fileNameTag}_${amount}.txt`;
+        
         document.body.appendChild(a);
         a.click(); 
-        
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        document.getElementById('statusText').innerText = `File .txt berisi ${amount} email berhasil diunduh!`;
+        tempEmailArray.forEach(email => savedEmailsDB.add(email));
+        
+        try {
+            localStorage.setItem('generatedHistory', JSON.stringify([...savedEmailsDB]));
+        } catch (e) {
+            alert("Peringatan: Memori browser hampir penuh. Silakan klik tombol 'Reset' database.");
+        }
+
+        updateDBCount();
+        document.getElementById('statusText').innerText = `File berhasil diunduh dan diamankan ke database!`;
+        document.getElementById('downloadBtn').disabled = true; 
     }
 </script>
 
